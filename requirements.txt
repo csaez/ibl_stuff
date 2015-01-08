@@ -1,0 +1,4 @@
+nose
+nose-watch
+coverage
+mock
