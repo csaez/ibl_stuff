@@ -55,3 +55,9 @@ target/
 
 # virtual environment
 venv/
+
+# rope
+.ropeproject/
+
+# project specifics
+refs/
