@@ -4,7 +4,14 @@ from ibl_stuff.gui.explorer import Explorer
 
 
 def show():
-    w = Explorer(parent=QtGui.QApplication.activeWindow())
+    parent = QtGui.QApplication.activeWindow()
+    w = None
+    for child in parent.children():
+        if not isinstance(child, Explorer):
+            continue
+        w = child
+    if w is None:
+        w = Explorer(parent)
     w.show()
 
 if __name__ == "__main__":
