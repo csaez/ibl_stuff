@@ -4,10 +4,32 @@ from ibl_stuff import api
 
 class Preview(QtGui.QGraphicsView):
 
-    def __init__(self, *arg, **kwds):
+    def __init__(self, ibl_data, *arg, **kwds):
         super(Preview, self).__init__(*arg, **kwds)
-        self.setScene(QtGui.QGraphicsScene())
+        self.ibl_data = ibl_data
+        for x in (self.setHorizontalScrollBarPolicy,
+                  self.setVerticalScrollBarPolicy):
+            x(QtCore.Qt.ScrollBarAlwaysOff)
         self.setFixedSize(250, 125)
+        self.setScene(QtGui.QGraphicsScene())
+        self.init_scene()
+
+    def add_pixmap(self, image):
+        pixmap = QtGui.QPixmap(image)
+        pixItem = QtGui.QGraphicsPixmapItem(pixmap)
+        scn = self.scene()
+        scn.addItem(pixItem)
+        return pixItem
+
+    def init_scene(self):
+        self.ui_pano = self.add_pixmap(self.ibl_data.get("pano"))
+        self.ui_sample = self.add_pixmap(self.ibl_data.get("sample"))
+        self.ui_sample.setVisible(False)
+
+    def mousePressEvent(self, event):
+        super(Preview, self).mousePressEvent(event)
+        self.ui_sample.setVisible(not self.ui_sample.isVisible())
+        self.ui_pano.setVisible(not self.ui_pano.isVisible())
 
 
 class Card(QtGui.QWidget):
@@ -21,14 +43,16 @@ class Card(QtGui.QWidget):
 
     def init_ui(self):
         # create qwidgets
-        self.ui_thumb = Preview()
+        self.ui_thumb = Preview(self.ibl_data)
         for each in self.labels:
             setattr(self, "ui_" + each, QtGui.QLabel())
+            getattr(self, "ui_" + each).setMaximumWidth(450)
         f = self.ui_title.font()
         f.setPointSize(f.pointSize() * 1.5)
         f.setBold(True)
         f.setCapitalization(QtGui.QFont.AllUppercase)
         self.ui_title.setFont(f)
+        self.ui_comments.setWordWrap(True)
         # set layout
         label_hbox = QtGui.QHBoxLayout()
         for x in (self.ui_lighting, QtGui.QLabel("-"), self.ui_type):
@@ -134,4 +158,4 @@ class Explorer(QtGui.QMainWindow):
         w = QtGui.QWidget()
         w.setLayout(hbox)
         self.setCentralWidget(w)
-        self.resize(1024, 550)
+        self.resize(900, 550)
