@@ -90,7 +90,10 @@ class Explorer(QtGui.QMainWindow):
                 k not in (QtCore.Qt.Key.Key_Left,
                           QtCore.Qt.Key.Key_Right,
                           QtCore.Qt.Key.Key_Up,
-                          QtCore.Qt.Key.Key_Down):
+                          QtCore.Qt.Key.Key_Down,
+                          QtCore.Qt.Key.Key_Return,
+                          QtCore.Qt.Key.Key_Enter,
+                          16777221, 16777248):  # last 2 are triggered by maya!
             self.search_ibl.setVisible(True)
             self.search_ibl.setFocus()
             self.search_ibl.setText(event.text())
