@@ -36,7 +36,7 @@ def get_ibls():
              "pano": IBL_PATH,
              "sample": SAMPLE_PATH,
              },
-            {"title": "Darwing Room",
+            {"title": "Drawing Room",
              "type": "Look-Dev",
              "lighting": "Cloudy",
              "location": "Mieres, Asturias, Spain",
@@ -133,3 +133,22 @@ def get_ibls():
              "sample":  SAMPLE_PATH,
              },
             )
+
+
+def search_ibl(word, ibl_subset=None):
+    if ibl_subset is None:
+        ibl_subset = get_ibls()
+    word = word.lower()
+    matches = list()
+    for ibl in ibl_subset:
+        ratio = 0
+        for values in ibl.values():
+            values = (values, ) if isinstance(values, basestring) else values
+            for v in values:
+                v = v.lower()
+                if word in v:
+                    ratio += 1
+        if ratio > 0:
+            matches.append((ratio, ibl))
+        matches.sort(key=lambda x: x[0], reverse=True)
+    return zip(*matches)[1]
