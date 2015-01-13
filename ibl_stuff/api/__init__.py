@@ -151,4 +151,7 @@ def search_ibl(word, ibl_subset=None):
         if ratio > 0:
             matches.append((ratio, ibl))
         matches.sort(key=lambda x: x[0], reverse=True)
-    return zip(*matches)[1]
+    results = list()
+    if matches:
+        results = zip(*matches)[1]
+    return results
