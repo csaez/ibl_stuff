@@ -1,5 +1,6 @@
-IBL_PATH = "/home/csaez/Works/dev/ibl_stuff/refs/pano.png"
-SAMPLE_PATH = "/home/csaez/Works/dev/ibl_stuff/refs/sample.png"
+_cache = {
+    "searches": dict()
+}
 
 
 def get_projects():
@@ -19,7 +20,9 @@ def get_projects():
 
 
 def get_ibls():
-    return ({"title": "Sunny Boat",
+    IBL_PATH = "/home/csaez/Works/dev/ibl_stuff/refs/pano.png"
+    SAMPLE_PATH = "/home/csaez/Works/dev/ibl_stuff/refs/sample.png"
+    ibls = ({"title": "Sunny Boat",
              "type": "Look-dev",
              "lighting": "Sunny",
              "location": "Portree, Isle of Skye, Scotland",
@@ -133,13 +136,23 @@ def get_ibls():
              "sample":  SAMPLE_PATH,
              },
             )
+    # add to cache
+    global _cache
+    for each in ibls:
+        _cache["searches"][each.get("title").lower()] = (each, )
+    return ibls
 
 
 def search_ibl(word, ibl_subset=None):
-    if ibl_subset is None:
-        ibl_subset = get_ibls()
     word = word.lower()
+    # check if cached
+    global _cache
+    cached = _cache["searches"].get(word)
+    if cached:
+        return cached
+    # compute search
     matches = list()
+    ibl_subset = get_ibls() if ibl_subset is None else ibl_subset
     for ibl in ibl_subset:
         ratio = 0
         for values in ibl.values():
@@ -151,9 +164,8 @@ def search_ibl(word, ibl_subset=None):
         if ratio > 0:
             matches.append((ratio, ibl))
         matches.sort(key=lambda x: x[0], reverse=True)
-    results = list()
-    if matches:
-        results = zip(*matches)[1]
+    results = zip(*matches)[1] if len(matches) else list()
+    _cache["searches"][word] = results  # add to cache
     return results
 
 
