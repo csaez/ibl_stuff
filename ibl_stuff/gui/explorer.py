@@ -2,11 +2,55 @@ from PySide import QtGui, QtCore
 from ibl_stuff import api
 
 
+class DetailedView(QtGui.QDialog):
+
+    def __init__(self, ibl_data=None, *arg, **kwds):
+        super(DetailedView, self).__init__(*arg, **kwds)
+        self.ibl_data = ibl_data or dict()
+        self.labels = ("title", "type", "lighting", "location", "tags",
+                       "author", "date", "comments")
+        self.setWindowTitle("IBL Stuff - " + type(self).__name__)
+        self.init_ui()
+
+    def init_ui(self):
+        form = QtGui.QFormLayout()
+        for l in self.labels:
+            label = QtGui.QLabel(l.capitalize() + ":")
+            f = label.font()
+            f.setItalic(True)
+            label.setFont(f)
+            w = (QtGui.QLineEdit, QtGui.QPlainTextEdit)[int(l == "comments")]
+            setattr(self, l, w())
+            form.addRow(label, getattr(self, l))
+        vbox = QtGui.QVBoxLayout()
+        hbox = QtGui.QHBoxLayout()
+        self.preview = Preview()
+        hbox.addStretch(1)
+        hbox.addWidget(self.preview)
+        hbox.addStretch(1)
+        vbox.addLayout(hbox)
+        vbox.addLayout(form)
+        vbox.addStretch(1)
+        self.setLayout(vbox)
+        self.resize(350, 500)
+
+    def update(self, ibl_data=None):
+        if ibl_data is not None:
+            self.ibl_data = ibl_data
+        for l in self.labels:
+            text = self.ibl_data.get(l, str())
+            if not isinstance(text, basestring):
+                text = ", ".join(text)
+            method = ("setText", "setPlainText")[int(l == "comments")]
+            getattr(getattr(self, l), method)(text)
+        self.preview.update(self.ibl_data)
+
+
 class Preview(QtGui.QGraphicsView):
 
-    def __init__(self, ibl_data, *arg, **kwds):
+    def __init__(self, ibl_data=None, *arg, **kwds):
         super(Preview, self).__init__(*arg, **kwds)
-        self.ibl_data = ibl_data
+        self.ibl_data = ibl_data or dict()
         for x in (self.setHorizontalScrollBarPolicy,
                   self.setVerticalScrollBarPolicy):
             x(QtCore.Qt.ScrollBarAlwaysOff)
@@ -25,6 +69,12 @@ class Preview(QtGui.QGraphicsView):
         self.ui_pano = self.add_pixmap(self.ibl_data.get("pano"))
         self.ui_sample = self.add_pixmap(self.ibl_data.get("sample"))
         self.ui_sample.setVisible(False)
+
+    def update(self, ibl_data=None):
+        if ibl_data is not None:
+            self.ibl_data = ibl_data
+        self.ui_pano.setPixmap(QtGui.QPixmap(self.ibl_data.get("pano")))
+        self.ui_sample.setPixmap(QtGui.QPixmap(self.ibl_data.get("sample")))
 
     def mousePressEvent(self, event):
         super(Preview, self).mousePressEvent(event)
@@ -89,7 +139,7 @@ class SearchLineEdit(QtGui.QLineEdit):
     def keyReleaseEvent(self, event):
         super(SearchLineEdit, self).keyReleaseEvent(event)
         if event.key() == QtCore.Qt.Key.Key_Escape:
-            self.setVisible(False)
+            self.setHidden(True)
             self.setText("")
 
 
@@ -97,8 +147,9 @@ class Explorer(QtGui.QMainWindow):
 
     def __init__(self, *arg, **kwds):
         super(Explorer, self).__init__(*arg, **kwds)
-        title = "IBL Stuff - " + type(self).__name__.replace("_", " ")
+        title = "IBL Stuff - " + type(self).__name__
         self.setWindowTitle(title)
+        self.dv = DetailedView(parent=self)
         self.ibl_cache = dict()
         self.init_ui()
 
@@ -108,7 +159,7 @@ class Explorer(QtGui.QMainWindow):
             return
         k = event.key()
         if k == QtCore.Qt.Key.Key_Escape:
-            self.search_ibl.setVisible(False)
+            self.search_ibl.setHidden(True)
             self.search_ibl.setText("")
         elif event.text().lower() in "abcdefghijklmnopqrstuvwxyz1234567890" and \
                 k not in (QtCore.Qt.Key.Key_Left,
@@ -118,7 +169,7 @@ class Explorer(QtGui.QMainWindow):
                           QtCore.Qt.Key.Key_Return,
                           QtCore.Qt.Key.Key_Enter,
                           16777221, 16777248):  # last 2 are triggered by maya!
-            self.search_ibl.setVisible(True)
+            self.search_ibl.setHidden(False)
             self.search_ibl.setFocus()
             self.search_ibl.setText(event.text())
 
@@ -135,11 +186,21 @@ class Explorer(QtGui.QMainWindow):
         for k, v in self.ibl_cache.iteritems():
             v.setHidden(k not in results)
 
+    def open_detailed_view(self, item):
+        for k, v in self.ibl_cache.iteritems():
+            if item is not v:
+                continue
+            ibl = api.search_ibl(k)
+            if len(ibl):
+                self.dv.update(ibl[0])
+                self.dv.exec_()
+                return
+
     def init_ui(self):
         # set IBLs
         self.search_ibl = SearchLineEdit()
         self.search_ibl.textChanged.connect(self.filter_ibl_list)
-        self.search_ibl.setVisible(False)
+        self.search_ibl.setHidden(True)
         self.ibl_list = QtGui.QListWidget()
         for ibl in api.get_ibls():
             self.add_ibl(ibl)
@@ -159,3 +220,5 @@ class Explorer(QtGui.QMainWindow):
         w.setLayout(hbox)
         self.setCentralWidget(w)
         self.resize(900, 550)
+        # connect signals
+        self.ibl_list.itemDoubleClicked.connect(self.open_detailed_view)
