@@ -155,3 +155,10 @@ def search_ibl(word, ibl_subset=None):
     if matches:
         results = zip(*matches)[1]
     return results
+
+
+def get_ibl(title):
+    ibls = search_ibl(title)
+    if len(ibls):
+        return ibls[0]
+    return None
