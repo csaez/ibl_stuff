@@ -1,84 +1,8 @@
 from PySide import QtGui, QtCore
+
 from ibl_stuff import api
-
-
-class DetailedView(QtGui.QDialog):
-
-    LABELS = ("title", "type", "lighting", "location", "tags", "author",
-              "date", "comments")
-
-    def __init__(self, ibl_data=None, *arg, **kwds):
-        super(DetailedView, self).__init__(*arg, **kwds)
-        self.ibl_data = ibl_data or dict()
-        self.setWindowTitle("IBL Stuff - " + type(self).__name__)
-        self.init_ui()
-
-    def init_ui(self):
-        self.ui_preview = Preview()
-        italic = QtGui.QFont()
-        italic.setItalic(True)
-        form = QtGui.QFormLayout()
-        for l in self.LABELS:
-            label = QtGui.QLabel(l.capitalize() + ":")
-            label.setFont(italic)
-            w = (QtGui.QLineEdit, QtGui.QPlainTextEdit)[int(l == "comments")]
-            setattr(self, l, w())
-            form.addRow(label, getattr(self, l))
-        hbox = QtGui.QHBoxLayout()
-        hbox.addStretch(1)
-        hbox.addWidget(self.ui_preview)
-        hbox.addStretch(1)
-        vbox = QtGui.QVBoxLayout()
-        vbox.addLayout(hbox)
-        vbox.addLayout(form)
-        vbox.addStretch(1)
-        self.setLayout(vbox)
-        self.resize(350, 500)
-
-    def update_ui(self, ibl_data=None):
-        if ibl_data is not None:
-            self.ibl_data = ibl_data
-        self.ui_preview.update_ui(self.ibl_data)
-        for l in self.LABELS:
-            text = self.ibl_data.get(l, str())
-            if not isinstance(text, basestring):
-                text = ", ".join(text)
-            method = ("setText", "setPlainText")[int(l == "comments")]
-            getattr(getattr(self, l), method)(text)
-
-
-class Preview(QtGui.QGraphicsView):
-
-    def __init__(self, ibl_data=None, *arg, **kwds):
-        super(Preview, self).__init__(*arg, **kwds)
-        self.ibl_data = ibl_data or dict()
-        for x in (self.setHorizontalScrollBarPolicy,
-                  self.setVerticalScrollBarPolicy):
-            x(QtCore.Qt.ScrollBarAlwaysOff)
-        self.setFixedSize(250, 125)
-        self.setScene(QtGui.QGraphicsScene())
-        self.init_scene()
-
-    def init_scene(self):
-        self.ui_pano = self.add_pixmap(self.ibl_data.get("pano"))
-        self.ui_sample = self.add_pixmap(self.ibl_data.get("sample"))
-        self.ui_sample.setVisible(False)
-
-    def update_ui(self, ibl_data=None):
-        if ibl_data is not None:
-            self.ibl_data = ibl_data
-        self.ui_pano.setPixmap(QtGui.QPixmap(self.ibl_data.get("pano")))
-        self.ui_sample.setPixmap(QtGui.QPixmap(self.ibl_data.get("sample")))
-
-    def add_pixmap(self, image):
-        pixmapItem = QtGui.QGraphicsPixmapItem(QtGui.QPixmap(image))
-        self.scene().addItem(pixmapItem)
-        return pixmapItem
-
-    def mousePressEvent(self, event):
-        super(Preview, self).mousePressEvent(event)
-        self.ui_sample.setVisible(not self.ui_sample.isVisible())
-        self.ui_pano.setVisible(not self.ui_pano.isVisible())
+from ibl_stuff.gui.preview import Preview
+from ibl_stuff.gui.detailed_view import DetailedView
 
 
 class Card(QtGui.QWidget):
@@ -146,7 +70,6 @@ class Explorer(QtGui.QMainWindow):
         super(Explorer, self).__init__(*arg, **kwds)
         title = "IBL Stuff - " + type(self).__name__
         self.setWindowTitle(title)
-        self.ui_dview = DetailedView(parent=self)
         self.ibl_cache = dict()
         self.init_ui()
 
@@ -195,8 +118,8 @@ class Explorer(QtGui.QMainWindow):
             if item is not v:
                 continue
             ibl = api.get_ibl(k)
-            self.ui_dview.update_ui(ibl)
-            self.ui_dview.exec_()
+            dview = DetailedView(ibl, parent=self)
+            dview.exec_()
             return
 
     def keyReleaseEvent(self, event):

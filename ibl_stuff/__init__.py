@@ -1,6 +1,6 @@
 import sys
 from PySide import QtGui
-from ibl_stuff.gui.explorer import Explorer
+from ibl_stuff.gui import Explorer
 
 
 def show():
