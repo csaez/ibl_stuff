@@ -8,12 +8,9 @@ def clear_cache():
         "searches": dict(),
         "ibls": dict(),
         "projects": dict(),
+        "tags": list(),
     }
     return True
-
-
-CACHE = dict()
-clear_cache()
 
 
 def get_library():
@@ -106,3 +103,28 @@ def get_ibl(title):
         CACHE["ibls"][ibl.get("title")] = ibl
         return ibl
     return None
+
+
+def save_ibl(ibl):
+    ibl.save()
+    CACHE["ibls"][ibl.get("title")] = ibl
+    CACHE["tags"] = list()  # force update
+
+
+def get_tags():
+    # check cache
+    tags = CACHE["tags"]
+    if len(tags):
+        return tags
+    # collect tags
+    tags = list()
+    for ibl in get_ibls():
+        tags.extend(ibl.get("tags"))
+    tags = list(set(tags))
+    # update CACHE
+    CACHE["tags"] = tags
+    # return
+    return tags
+
+CACHE = dict()
+clear_cache()

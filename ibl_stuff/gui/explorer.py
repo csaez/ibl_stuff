@@ -9,14 +9,14 @@ class Card(QtGui.QWidget):
 
     LABELS = ("title", "type", "lighting", "comments")
 
-    def __init__(self, ibl_data):
+    def __init__(self, ibl):
         super(Card, self).__init__()
-        self.ibl_data = ibl_data
+        self.ibl = ibl
         self.init_ui()
 
     def init_ui(self):
         # create qwidgets
-        self.ui_preview = Preview(self.ibl_data)
+        self.ui_preview = Preview(self.ibl)
         for each in self.LABELS:
             setattr(self, "ui_" + each, QtGui.QLabel())
             getattr(self, "ui_" + each).setMaximumWidth(450)
@@ -44,15 +44,15 @@ class Card(QtGui.QWidget):
 
     def update_ui(self, data=None):
         if data:
-            self.ibl_data = data
+            self.ibl = data
         for x in self.LABELS:
-            d = self.ibl_data.get(x)
+            d = self.ibl.get(x)
             getattr(self, "ui_" + x).setText(d)
 
     def get(self, arg):
-        if not self.ibl_data:
-            self.ibl_data = dict()  # init
-        return self.ibl_data.get(arg)
+        if not self.ibl:
+            self.ibl = dict()  # init
+        return self.ibl.get(arg)
 
 
 class SearchLineEdit(QtGui.QLineEdit):
@@ -79,12 +79,8 @@ class Explorer(QtGui.QMainWindow):
         self.ui_search.textChanged.connect(self.filter_ibls)
         self.ui_search.setHidden(True)
         self.ui_ibls = QtGui.QListWidget()
-        for ibl in api.get_ibls():
-            self.add_ibl(ibl)
         # set projects
         self.ui_project = QtGui.QListWidget()
-        for p in api.get_projects():
-            self.ui_project.addItem(QtGui.QListWidgetItem(p))
         self.ui_project.setMaximumWidth(180)
         # layout
         vbox = QtGui.QVBoxLayout()
@@ -99,6 +95,18 @@ class Explorer(QtGui.QMainWindow):
         self.resize(900, 550)
         # connect signals
         self.ui_ibls.itemDoubleClicked.connect(self.open_dview)
+        # fill gui
+        self.reload()
+
+    def reload(self):
+        # add ibls
+        self.ui_ibls.clear()
+        for ibl in api.get_ibls():
+            self.add_ibl(ibl)
+        # add projects
+        self.ui_project.clear()
+        for p in api.get_projects():
+            self.ui_project.addItem(QtGui.QListWidgetItem(p))
 
     def add_ibl(self, ibl):
         c = Card(ibl)
@@ -119,7 +127,11 @@ class Explorer(QtGui.QMainWindow):
                 continue
             ibl = api.get_ibl(k)
             dview = DetailedView(ibl, parent=self)
-            dview.exec_()
+            if dview.exec_():
+                # update card
+                item = self.ibl_cache.get(ibl.get("title"))
+                card = self.ui_ibls.itemWidget(item)
+                card.update_ui(ibl)
             return
 
     def keyReleaseEvent(self, event):
