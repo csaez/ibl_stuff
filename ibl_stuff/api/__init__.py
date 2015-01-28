@@ -1,25 +1,33 @@
 import os
-from ibl import IBL
-
-CACHE = {"searches": dict(), "ibls": dict()}
+from ibl_stuff.api.ibl import IBL
 
 
 def clear_cache():
     global CACHE
-    CACHE = {"searches": dict(), "ibls": dict()}
+    CACHE = {
+        "searches": dict(),
+        "ibls": dict(),
+        "projects": dict(),
+    }
     return True
 
 
-def get_repo():
-    repo = os.path.join(os.path.expanduser("~"), "ibl_stuff")
-    if not os.path.exists(repo):
-        os.makedirs(repo)
-    return repo
+CACHE = dict()
+clear_cache()
+
+
+def get_library():
+    library = os.environ.get("IBL_LIBRARY")
+    if library is None:
+        library = os.path.join(os.path.expanduser("~"), "ibl_stuff")
+    if not os.path.exists(library):
+        os.makedirs(library)
+    return library
 
 
 def get_projects():
     # check cache
-    projects = CACHE["ibls"].keys()
+    projects = CACHE["projects"].keys()
     if len(projects):
         return projects
     # collect from ibls
@@ -33,29 +41,33 @@ def get_projects():
             k = projects.get(p)
             if not k:
                 projects[p] = list()
-            projects[p].append(ibl)
+            projects[p].append(ibl.get("title"))
     # add to cache
-    CACHE["ibls"].update(projects)
+    CACHE["projects"].update(projects)
     return projects.keys()
 
 
 def get_ibls(project=None):
-    project = project or "ALL"
     # get from cache
-    ibls = CACHE["ibls"].get(project)
-    if ibls:
+    if project is None:
+        ibls = CACHE["ibls"].values()
+    else:
+        ibls = [CACHE["ibl"].get(x) for x in CACHE["projects"].get(project)]
+        ibls = [x for x in ibls if x is not None]
+    if len(ibls):
         return ibls
     # collect from filesystem
     ibls = list()
-    for dirpath, _, filenames in os.walk(get_repo()):
+    for dirpath, _, filenames in os.walk(get_library()):
         for filename in filenames:
-            filepath = os.path.join(dirpath, filename)
-            x = IBL()
-            x.import_data(filepath)
-            if project in x.get("projects") or project == "ALL":
-                ibls.append(x)
+            if not filename.endswith(".json"):
+                continue
+            ibl = IBL.from_data(os.path.join(dirpath, filename))
+            if project in ibl.get("projects") or project is None:
+                ibls.append(ibl)
+            CACHE["ibls"][ibl.get("title")] = ibl
     # add to cache
-    CACHE["ibls"][project] = ibls
+    CACHE["projects"][str(project)] = [x.get("title") for x in ibls]
     return ibls
 
 
@@ -82,7 +94,15 @@ def search_ibl(word, project=None):
 
 
 def get_ibl(title):
+    # try cache first
+    ibl = CACHE["ibls"].get(title)
+    if ibl:
+        return ibl
+    # search
     ibls = search_ibl(title)
     if len(ibls):
-        return ibls[0]
+        ibl = ibls[0]
+        # add to cache
+        CACHE["ibls"][ibl.get("title")] = ibl
+        return ibl
     return None
