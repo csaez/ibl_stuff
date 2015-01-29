@@ -76,7 +76,6 @@ class Explorer(QtGui.QMainWindow):
     def init_ui(self):
         # set IBLs
         self.ui_search = SearchLineEdit()
-        self.ui_search.textChanged.connect(self.filter_ibls)
         self.ui_search.setHidden(True)
         self.ui_ibls = QtGui.QListWidget()
         # set projects
@@ -94,7 +93,9 @@ class Explorer(QtGui.QMainWindow):
         self.setCentralWidget(cw)
         self.resize(900, 550)
         # connect signals
+        self.ui_search.textChanged.connect(self.filter_ibls)
         self.ui_ibls.itemDoubleClicked.connect(self.open_dview)
+        self.ui_project.itemClicked.connect(self.filter_by_project)
         # fill gui
         self.reload()
 
@@ -104,9 +105,33 @@ class Explorer(QtGui.QMainWindow):
         for ibl in api.get_ibls():
             self.add_ibl(ibl)
         # add projects
+        projects = api.get_projects()
         self.ui_project.clear()
-        for p in api.get_projects():
+        for p in projects:
             self.ui_project.addItem(QtGui.QListWidgetItem(p))
+
+    def update_projects(self):
+        projects = set(api.get_projects())
+        items = set([self.ui_project.item(i).text()
+                     for i in range(self.ui_project.count())])
+        to_remove = items - projects
+        to_add = projects - items
+        # remove unused projects
+        for prj in to_remove:
+            self.remove_item(prj)
+        # add new items
+        for prj in to_add:
+            self.ui_project.addItem(QtGui.QListWidgetItem(prj))
+
+    def remove_item(self, item_text):
+        for i in range(self.ui_project.count()):
+            item = self.ui_project.item(i)
+            if not item:
+                continue
+            if item.text() == item_text:
+                self.ui_project.takeItem(i)
+                return True
+        return False
 
     def add_ibl(self, ibl):
         c = Card(ibl)
@@ -121,6 +146,15 @@ class Explorer(QtGui.QMainWindow):
         for k, v in self.ibl_cache.iteritems():
             v.setHidden(k not in results)
 
+    def filter_by_project(self):
+        prj = self.ui_project.item(self.ui_project.currentRow() or 0)
+        if not prj:
+            return
+        prj = prj.text()
+        results = [x.get("title") for x in api.get_ibls(prj)]
+        for k, v in self.ibl_cache.iteritems():
+            v.setHidden(k not in results)
+
     def open_dview(self, item):
         for k, v in self.ibl_cache.iteritems():
             if item is not v:
@@ -132,6 +166,8 @@ class Explorer(QtGui.QMainWindow):
                 item = self.ibl_cache.get(ibl.get("title"))
                 card = self.ui_ibls.itemWidget(item)
                 card.update_ui(ibl)
+                self.update_projects()
+                self.filter_by_project()
             return
 
     def keyReleaseEvent(self, event):

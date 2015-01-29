@@ -1,7 +1,7 @@
 from PySide import QtGui, QtCore
 
 IMAGE_WIDTH = 250
-IMAGE_HEIGHT = 123
+IMAGE_HEIGHT = 125
 
 
 class Image(QtGui.QWidget):

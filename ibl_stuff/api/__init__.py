@@ -25,7 +25,7 @@ def get_library():
 def get_projects():
     # check cache
     projects = CACHE["projects"].keys()
-    if len(projects):
+    if len(projects) > 1:
         return projects
     # collect from ibls
     ibls = get_ibls()
@@ -34,22 +34,25 @@ def get_projects():
         prjs = ibl.get("projects")
         if not prjs:
             continue
-        for p in prjs.split(", "):
+        for p in prjs:
+            p = p or "None"
             k = projects.get(p)
             if not k:
                 projects[p] = list()
             projects[p].append(ibl.get("title"))
     # add to cache
-    CACHE["projects"].update(projects)
+    CACHE["projects"] = projects
     return projects.keys()
 
 
 def get_ibls(project=None):
+    if project is "None":
+        project = None
     # get from cache
     if project is None:
         ibls = CACHE["ibls"].values()
     else:
-        ibls = [CACHE["ibl"].get(x) for x in CACHE["projects"].get(project)]
+        ibls = [CACHE["ibls"].get(x) for x in CACHE["projects"].get(project)]
         ibls = [x for x in ibls if x is not None]
     if len(ibls):
         return ibls
@@ -108,7 +111,10 @@ def get_ibl(title):
 def save_ibl(ibl):
     ibl.save()
     CACHE["ibls"][ibl.get("title")] = ibl
-    CACHE["tags"] = list()  # force update
+    # force cache update
+    CACHE["projects"] = dict()
+    CACHE["tags"] = list()
+    CACHE["searches"] = dict()
 
 
 def get_tags():
