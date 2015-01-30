@@ -74,10 +74,22 @@ class Explorer(QtGui.QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        # set IBLs
+        # set search field
         self.ui_search = SearchLineEdit()
         self.ui_search.setHidden(True)
+        # set IBLs
         self.ui_ibls = QtGui.QListWidget()
+        # set ibl context menu
+        self.ui_ibl_menu = QtGui.QMenu(self)
+        menu_items = (
+            "View Details",
+            "Send to Maya",
+            "Create empty",
+            "Remove...")
+        for action in menu_items:
+            self.ui_ibl_menu.addAction(action)
+        self.ui_ibl_menu.triggered.connect(self.iblActionTriggered)
+        self.ui_ibls.contextMenuEvent = self.iblContextMenu
         # set projects
         self.ui_project = QtGui.QListWidget()
         self.ui_project.setMaximumWidth(180)
@@ -191,3 +203,13 @@ class Explorer(QtGui.QMainWindow):
             self.ui_search.setHidden(False)
             self.ui_search.setFocus()
             self.ui_search.setText(event.text())
+
+    def iblContextMenu(self, event):
+        self.ui_ibl_menu.move(event.globalPos())
+        self.ui_ibl_menu.exec_()
+
+    def iblActionTriggered(self, action):
+        item = self.ui_ibls.item(self.ui_ibls.currentRow())
+        {
+            "View Details": lambda x=item: self.open_dview(x),
+        }.get(action.text(), lambda: None)()
