@@ -151,6 +151,8 @@ class Explorer(QtGui.QMainWindow):
         if not prj:
             return
         prj = prj.text()
+        if prj == "None":
+            prj = None
         results = [x.get("title") for x in api.get_ibls(prj)]
         for k, v in self.ibl_cache.iteritems():
             v.setHidden(k not in results)

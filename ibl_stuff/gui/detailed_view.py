@@ -3,6 +3,52 @@ from ibl_stuff import api
 from ibl_stuff.gui.preview import Preview
 
 
+class CompleterLineEdit(QtGui.QLineEdit):
+
+    def text_changed(self):
+        text = self.text()
+        all_text = unicode(text)
+        text = all_text[:self.cursorPosition()]
+        prefix = text.split(",")[-1].strip()
+
+        text_tags = []
+        for t in all_text.split(","):
+            t1 = unicode(t).strip()
+            if t1 != "":
+                text_tags.append(t)
+        text_tags = list(set(text_tags))
+
+        return text_tags, prefix
+
+    def complete_text(self, text):
+        cursor_pos = self.cursorPosition()
+        before_text = unicode(self.text())[:cursor_pos]
+        after_text = unicode(self.text())[cursor_pos:]
+        prefix_len = len(before_text.split(",")[-1].strip())
+        self.setText("%s%s, %s" % (before_text[:cursor_pos - prefix_len], text,
+                                   after_text))
+        self.setCursorPosition(cursor_pos - prefix_len + len(text) + 2)
+
+
+class TagsCompleter(QtGui.QCompleter):
+
+    def __init__(self, all_tags, parent):
+        super(TagsCompleter, self).__init__(all_tags, parent)
+        self.all_tags = set(all_tags)
+        self.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+
+    def update(self, _):
+        sender = self.sender()
+        text_tags, completion_prefix = sender.text_changed()
+        tags = list(self.all_tags.difference(text_tags))
+        model = QtGui.QStringListModel(tags, self)
+        self.setModel(model)
+
+        self.setCompletionPrefix(completion_prefix)
+        if completion_prefix.strip() != "":
+            self.complete()
+
+
 class DetailedView(QtGui.QDialog):
 
     LABELS = ("title", "type", "lighting", "projects",
@@ -26,8 +72,22 @@ class DetailedView(QtGui.QDialog):
             label = QtGui.QLabel(l.capitalize() + ":")
             label.setFont(italic)
             w = (QtGui.QLineEdit, QtGui.QPlainTextEdit)[int(l == "comments")]
+            if l == "tags" or l == "projects":
+                w = CompleterLineEdit
             setattr(self, l, w())
             form.addRow(label, getattr(self, l))
+            # TODO: cleanup
+            # autocomplete tags
+            if l == "tags":
+                c = TagsCompleter(api.get_tags(), self)
+                self.tags.textChanged.connect(c.update)
+                c.activated.connect(self.tags.complete_text)
+                c.setWidget(self.tags)
+            if l == "projects":
+                c = TagsCompleter(api.get_projects(), self)
+                self.projects.textChanged.connect(c.update)
+                c.activated.connect(self.projects.complete_text)
+                c.setWidget(self.projects)
         hbox = QtGui.QHBoxLayout()
         hbox.addStretch(1)
         hbox.addWidget(self.ui_preview)
@@ -64,9 +124,10 @@ class DetailedView(QtGui.QDialog):
                 QtGui.QLineEdit: lambda x: x.text(),
             }
             label = getattr(self, l)
-            text = get_text.get(type(label))(label)
+            text = get_text.get(type(label), lambda x: x.text())(label)
             if l in ("tags", "projects"):
                 text = text.split(", ")
+                text = [x for x in text if x]
             self.ibl[l] = text
         api.save_ibl(self.ibl)
 
