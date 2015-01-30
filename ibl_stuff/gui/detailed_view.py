@@ -68,26 +68,21 @@ class DetailedView(QtGui.QDialog):
         italic = QtGui.QFont()
         italic.setItalic(True)
         form = QtGui.QFormLayout()
-        for l in self.LABELS:
-            label = QtGui.QLabel(l.capitalize() + ":")
-            label.setFont(italic)
-            w = (QtGui.QLineEdit, QtGui.QPlainTextEdit)[int(l == "comments")]
-            if l == "tags" or l == "projects":
-                w = CompleterLineEdit
-            setattr(self, l, w())
-            form.addRow(label, getattr(self, l))
-            # TODO: cleanup
-            # autocomplete tags
-            if l == "tags":
-                c = TagsCompleter(api.get_tags(), self)
-                self.tags.textChanged.connect(c.update)
-                c.activated.connect(self.tags.complete_text)
-                c.setWidget(self.tags)
-            if l == "projects":
-                c = TagsCompleter(api.get_projects(), self)
-                self.projects.textChanged.connect(c.update)
-                c.activated.connect(self.projects.complete_text)
-                c.setWidget(self.projects)
+        for label in self.LABELS:
+            ui_label = QtGui.QLabel(label.capitalize() + ":")
+            ui_label.setFont(italic)
+            widgets = {"comments": QtGui.QPlainTextEdit,
+                       "projects": CompleterLineEdit,
+                       "tags": CompleterLineEdit}.get(label, QtGui.QLineEdit)
+            setattr(self, "ui_" + label, widgets())
+            ui_edit = getattr(self, "ui_" + label)
+            form.addRow(ui_label, ui_edit)
+            # autocomplete
+            if label in ("projects", "tags"):
+                c = TagsCompleter(getattr(api, "get_" + label)(), self)
+                ui_edit.textChanged.connect(c.update)
+                c.activated.connect(ui_edit.complete_text)
+                c.setWidget(ui_edit)
         hbox = QtGui.QHBoxLayout()
         hbox.addStretch(1)
         hbox.addWidget(self.ui_preview)
@@ -110,26 +105,34 @@ class DetailedView(QtGui.QDialog):
         if ibl is not None:
             self.ibl = ibl
         self.ui_preview.update_ui(self.ibl)
-        for l in self.LABELS:
-            text = self.ibl.get(l, str())
+        for label in self.LABELS:
+            text = self.ibl.get(label, str())
             if not isinstance(text, basestring):
                 text = ", ".join(text)
-            method = ("setText", "setPlainText")[int(l == "comments")]
-            getattr(getattr(self, l), method)(text)
+            widget = getattr(self, "ui_" + label)
+            self._set_text(widget, text)
 
     def update_ibl(self):
-        for l in self.LABELS:
-            get_text = {
-                QtGui.QPlainTextEdit: lambda x: x.toPlainText(),
-                QtGui.QLineEdit: lambda x: x.text(),
-            }
-            label = getattr(self, l)
-            text = get_text.get(type(label), lambda x: x.text())(label)
-            if l in ("tags", "projects"):
+        for label in self.LABELS:
+            ui_label = getattr(self, "ui_" + label)
+            text = self._get_text(ui_label)
+            if label in ("tags", "projects"):
                 text = text.split(", ")
                 text = [x for x in text if x]
-            self.ibl[l] = text
+            self.ibl[label] = text
         api.save_ibl(self.ibl)
+
+    def _get_text(self, widget):
+        return {
+            QtGui.QPlainTextEdit: lambda x=widget: x.toPlainText(),
+            QtGui.QLineEdit: lambda x=widget: x.text(),
+        }.get(type(widget), lambda x=widget: x.text())()
+
+    def _set_text(self, widget, text):
+        return {
+            QtGui.QPlainTextEdit: lambda t, x=widget: x.setPlainText(t),
+            QtGui.QLineEdit: lambda t, x=widget: x.setText(t),
+        }.get(type(widget), lambda t, x=widget: x.setText(t))(text)
 
     def accept(self):
         self.update_ibl()
