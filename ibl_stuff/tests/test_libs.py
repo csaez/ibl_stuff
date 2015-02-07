@@ -16,7 +16,8 @@ def setup_library():
     _library = os.path.join(os.path.expanduser("~"), "test_library")
     if os.path.exists(_library):
         shutil.rmtree(_library)
-    del os.environ["IBL_LIBRARY"]
+    if ENV_LIBRARY:
+        del os.environ["IBL_LIBRARY"]
     libs.set_library(_library)
     for i, prj in enumerate(["foo", "bar", "baz"]):
         x = libs.new_ibl("test%d" % i)
@@ -66,6 +67,8 @@ def test_get_ibl():
     for i, prj in enumerate(("foo", "bar", "baz")):
         assert libs.get_ibl("test%d" % i)["projects"] == [prj]
     assert libs.get_ibl("foo") is None
+    libs.clear_cache()
+    assert libs.get_ibl("test0") is not None
 
 
 @with_setup(setup_library, teardown_library)
