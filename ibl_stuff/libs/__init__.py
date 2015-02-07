@@ -1,6 +1,7 @@
 import os
 import shutil
-from ibl_stuff.api.ibl import IBL
+from PySide.QtCore import QSettings
+from ibl_stuff.libs.ibl import IBL
 
 
 def clear_cache():
@@ -16,11 +17,24 @@ def clear_cache():
 
 def get_library():
     library = os.environ.get("IBL_LIBRARY")
-    if library is None:
+    if not library:
+        try:
+            s = QSettings("csaez", "ibl_stuff")
+            library = s.value("library")
+        except:
+            pass
+    if not library:
         library = os.path.join(os.path.expanduser("~"), "ibl_stuff")
+        set_library(library)
     if not os.path.exists(library):
         os.makedirs(library)
     return library
+
+
+def set_library(library_path):
+    library_path = os.path.normpath(library_path)
+    settings = QSettings("csaez", "ibl_stuff")
+    settings.setValue("library", library_path)
 
 
 def get_projects():
@@ -101,7 +115,7 @@ def get_ibl(title):
         return ibl
     # search
     ibls = search_ibl(title)
-    if len(ibls):
+    if len(ibls) and ibls[0]["title"] == title:
         ibl = ibls[0]
         # add to cache
         CACHE["ibls"][ibl.get("title")] = ibl
@@ -117,10 +131,13 @@ def new_ibl(title):
     ibl = IBL.from_data(os.path.join(dst, "metadata.json"))
     ibl["title"] = title
     save_ibl(ibl)
+    return ibl
 
 
 def remove_ibl(title):
     ibl = get_ibl(title)
+    if not ibl:
+        return False
     if ibl.filepath:
         shutil.rmtree(os.path.dirname(ibl.filepath))
     del CACHE["ibls"][title]

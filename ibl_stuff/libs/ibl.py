@@ -1,6 +1,6 @@
 import os
 import json
-from ibl_stuff.api.relpath import relpath
+from ibl_stuff.libs.relpath import relpath
 
 
 BASE = {"title": "",
@@ -32,9 +32,6 @@ class IBL(dict):
         self.filepath = None
 
     def export_data(self, filepath):
-        # validate filepath
-        if not os.path.isfile(filepath):
-            return False
         d = self.copy()
         # save paths relatives to json filepath
         for attr in ("pano", "sample"):
