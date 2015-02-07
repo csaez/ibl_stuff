@@ -1,0 +1,19 @@
+{
+    "tags": [
+        "interior",
+        "industrial",
+        "destroyed",
+        "sunny",
+        "shade"
+    ],
+    "type": "Look-Dev",
+    "author": "Xuan Prada",
+    "comments": "To be used for digital doubles in pt_mc_04 seq.",
+    "sample": "thumbnails/render.png",
+    "lighting": "Cloudy",
+    "location": "Mieres, Asturias, Spain",
+    "date": "09-Mar-2014",
+    "title": "Drawing Room",
+    "pano": "thumbnails/pano.png",
+    "projects": []
+}

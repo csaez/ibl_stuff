@@ -1,0 +1,18 @@
+{
+    "tags": [
+        "interior",
+        "artificial",
+        "on-set",
+        "studio"
+    ],
+    "type": "Texture Checker",
+    "author": "Xuan Prada",
+    "comments": "Delorean textures need to be approved using this.",
+    "sample": "thumbnails/render.png",
+    "lighting": "Neutral",
+    "location": "Pinewood Studios, London, UK",
+    "date": "21-Apr-2014",
+    "title": "Pinewood Studios, Stage 02",
+    "pano": "thumbnails/pano.png",
+    "projects": []
+}

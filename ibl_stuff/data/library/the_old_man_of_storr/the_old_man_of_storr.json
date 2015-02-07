@@ -1,0 +1,19 @@
+{
+    "tags": [
+        "exterior",
+        "natural",
+        "rocks",
+        "cloudy",
+        "stormy"
+    ],
+    "type": "Look-Dev",
+    "author": "Xuan Prada",
+    "comments": "To be used for CG cars in jm_pr_02 sequence.",
+    "sample": "thumbnails/render.png",
+    "lighting": "Cloudy",
+    "location": "Portree, Isle of Skye, Scotland",
+    "date": "24-Jun-2014",
+    "title": "The Old Man of Storr",
+    "pano": "thumbnails/pano.png",
+    "projects": []
+}

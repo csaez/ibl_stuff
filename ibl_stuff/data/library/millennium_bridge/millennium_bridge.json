@@ -1,0 +1,18 @@
+{
+    "tags": [
+        "exterior",
+        "urban",
+        "cloudy",
+        "stormy"
+    ],
+    "type": "Look-Dev",
+    "author": "Xuan Prada",
+    "comments": "This IBL is for look-deving the digital building for the opening sequence.\nImportant: Forgot to shoot Macbeth charts, use grey ball for color grading.",
+    "sample": "thumbnails/render.png",
+    "lighting": "Cloudy",
+    "location": "City of Westminster, London, UK",
+    "date": "17-May-2014",
+    "title": "Millennium Bridge",
+    "pano": "thumbnails/pano.png",
+    "projects": []
+}

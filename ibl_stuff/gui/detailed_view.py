@@ -51,8 +51,8 @@ class TagsCompleter(QtGui.QCompleter):
 
 class DetailedView(QtGui.QDialog):
 
-    LABELS = ("title", "type", "lighting", "projects",
-              "location", "tags", "author", "date", "comments")
+    LABELS = ("type", "lighting", "tags", "projects", "location", "author",
+              "date", "comments")
 
     def __init__(self, ibl=None, *arg, **kwds):
         super(DetailedView, self).__init__(*arg, **kwds)
@@ -105,6 +105,7 @@ class DetailedView(QtGui.QDialog):
         if ibl is not None:
             self.ibl = ibl
         self.ui_preview.update_ui(self.ibl)
+        self.setWindowTitle("IBL Stuff - " + self.ibl.get("title"))
         for label in self.LABELS:
             text = self.ibl.get(label, str())
             if not isinstance(text, basestring):

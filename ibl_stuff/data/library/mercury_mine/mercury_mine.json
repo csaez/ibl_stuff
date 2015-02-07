@@ -1,0 +1,19 @@
+{
+    "tags": [
+        "interior",
+        "industrial",
+        "destroyed",
+        "sunny",
+        "shade"
+    ],
+    "type": "Look-Dev",
+    "author": "Xuan Prada",
+    "comments": "To be used for look-deving digital dogs",
+    "sample": "thumbnails/render.png",
+    "lighting": "Sunny",
+    "location": "Mieres, Asturis, Spain",
+    "date": "17-Aug-2014",
+    "title": "Mercury Mine",
+    "pano": "thumbnails/pano.png",
+    "projects": []
+}

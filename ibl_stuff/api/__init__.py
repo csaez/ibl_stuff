@@ -1,4 +1,5 @@
 import os
+import shutil
 from ibl_stuff.api.ibl import IBL
 
 
@@ -106,6 +107,34 @@ def get_ibl(title):
         CACHE["ibls"][ibl.get("title")] = ibl
         return ibl
     return None
+
+
+def new_ibl(title):
+    title = title.replace(" ", "_")
+    src = os.path.join(os.path.dirname(__file__), "..", "data", "template")
+    dst = os.path.join(get_library(), title)
+    copy_anything(src, dst)
+    ibl = IBL.from_data(os.path.join(dst, "metadata.json"))
+    ibl["title"] = title
+    save_ibl(ibl)
+
+
+def remove_ibl(title):
+    ibl = get_ibl(title)
+    if ibl.filepath:
+        shutil.rmtree(os.path.dirname(ibl.filepath))
+    del CACHE["ibls"][title]
+    CACHE["searches"] = dict()
+    CACHE["projects"] = dict()
+    CACHE["tags"] = list()
+    return True
+
+
+def copy_anything(src, dst):
+    if os.path.isdir(src):
+        shutil.copytree(src, dst)
+    else:
+        shutil.copy(src, dst)
 
 
 def save_ibl(ibl):

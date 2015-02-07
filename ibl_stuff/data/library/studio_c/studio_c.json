@@ -1,0 +1,20 @@
+{
+    "tags": [
+        "interior",
+        "artificial",
+        "studio",
+        "cg generated"
+    ],
+    "type": "Model Checker",
+    "author": "Xuan Prada",
+    "comments": "CG models need to be approved using this IBL.",
+    "sample": "thumbnails/render.png",
+    "lighting": "Neutral",
+    "location": "Computer generated",
+    "date": "04-Jul-2014",
+    "title": "Studio C",
+    "pano": "thumbnails/pano.png",
+    "projects": [
+        ""
+    ]
+}

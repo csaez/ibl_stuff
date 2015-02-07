@@ -1,0 +1,21 @@
+{
+    "tags": [
+        "exterior",
+        "town",
+        "sea",
+        "natural environment",
+        "docks",
+        "sunny",
+        "winter"
+    ],
+    "type": "Look-Dev",
+    "author": "Xuan Prada",
+    "comments": "This IBL was shot for the coat crash sequence.",
+    "sample": "thumbnails/render.png",
+    "lighting": "Sunny",
+    "location": "Portree, Isle of Skye, Scotland",
+    "date": "12-Feb-2014",
+    "title": "Sunny Boat",
+    "pano": "thumbnails/pano.png",
+    "projects": []
+}

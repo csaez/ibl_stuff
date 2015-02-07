@@ -64,6 +64,58 @@ class SearchLineEdit(QtGui.QLineEdit):
             self.setText("")
 
 
+class NewIBL(QtGui.QInputDialog):
+
+    @classmethod
+    def get_ibl(cls, *arg, **kwds):
+        ob = cls(*arg, **kwds)
+        ok = ob.exec_()
+        if ok:
+            ibl = api.get_ibl(ob.get_text())
+            return ibl
+        return None
+
+    def __init__(self, *arg, **kwds):
+        super(NewIBL, self).__init__(*arg, **kwds)
+        self.setWindowTitle("New IBL")
+        self.setLabelText("IBL title")
+        self.ibl_titles = [x.get("title").lower() for x in api.get_ibls()]
+        self.textValueChanged.connect(self.validate)
+        self.ibl = None
+
+    def is_valid(self):
+        text = self.get_text()
+        if text:
+            len_text = bool(len(text))
+            return text.lower() not in self.ibl_titles and len_text
+
+    def validate(self, text):
+        btn = self.get_button("OK")
+        if btn:
+            btn.setEnabled(self.is_valid())
+
+    def get_button(self, text):
+        for child in self.children():
+            if not isinstance(child, QtGui.QDialogButtonBox):
+                continue
+            for btn in child.children():
+                if isinstance(btn, QtGui.QPushButton) and text in btn.text():
+                    return btn
+        return None
+
+    def get_text(self):
+        for child in self.children():
+            if not isinstance(child, QtGui.QLineEdit):
+                continue
+            return child.text()
+        return None
+
+    def accept(self, *arg, **kwds):
+        if self.is_valid():
+            self.ibl = api.new_ibl(self.get_text())
+            super(NewIBL, self).accept(*arg, **kwds)
+
+
 class Explorer(QtGui.QMainWindow):
 
     def __init__(self, *arg, **kwds):
@@ -82,14 +134,17 @@ class Explorer(QtGui.QMainWindow):
         # set ibl context menu
         self.ui_ibl_menu = QtGui.QMenu(self)
         menu_items = (
-            "View Details",
             "Send to Maya",
-            "Create empty",
-            "Remove...")
+            "View/Edit Details",
+            "Create Empty",
+            "Remove",
+            "Import",
+            "Export",
+        )
         for action in menu_items:
+            if action in ("Create Empty", "Import"):
+                self.ui_ibl_menu.addSeparator()
             self.ui_ibl_menu.addAction(action)
-        self.ui_ibl_menu.triggered.connect(self.iblActionTriggered)
-        self.ui_ibls.contextMenuEvent = self.iblContextMenu
         # set projects
         self.ui_project = QtGui.QListWidget()
         self.ui_project.setMaximumWidth(180)
@@ -105,6 +160,8 @@ class Explorer(QtGui.QMainWindow):
         self.setCentralWidget(cw)
         self.resize(900, 550)
         # connect signals
+        self.ui_ibl_menu.triggered.connect(self.iblActionTriggered)
+        self.ui_ibls.contextMenuEvent = self.iblContextMenu
         self.ui_search.textChanged.connect(self.filter_ibls)
         self.ui_ibls.itemDoubleClicked.connect(self.open_dview)
         self.ui_project.itemClicked.connect(self.filter_by_project)
@@ -152,6 +209,7 @@ class Explorer(QtGui.QMainWindow):
         self.ui_ibls.addItem(item)
         self.ui_ibls.setItemWidget(item, c)
         self.ibl_cache[ibl.get("title")] = item
+        return item
 
     def filter_ibls(self, word):
         results = [x.get("title") for x in api.search_ibl(word)]
@@ -170,19 +228,17 @@ class Explorer(QtGui.QMainWindow):
             v.setHidden(k not in results)
 
     def open_dview(self, item):
-        for k, v in self.ibl_cache.iteritems():
-            if item is not v:
-                continue
-            ibl = api.get_ibl(k)
-            dview = DetailedView(ibl, parent=self)
-            if dview.exec_():
-                # update card
-                item = self.ibl_cache.get(ibl.get("title"))
-                card = self.ui_ibls.itemWidget(item)
-                card.update_ui(ibl)
-                self.update_projects()
-                self.filter_by_project()
+        ibl = self.get_ibl_by_card(item)
+        if not ibl:
             return
+        dview = DetailedView(ibl, parent=self)
+        if dview.exec_():
+            # update card
+            item = self.ibl_cache.get(ibl.get("title"))
+            card = self.ui_ibls.itemWidget(item)
+            card.update_ui(ibl)
+            self.update_projects()
+            self.filter_by_project()
 
     def keyReleaseEvent(self, event):
         super(Explorer, self).keyReleaseEvent(event)
@@ -206,10 +262,42 @@ class Explorer(QtGui.QMainWindow):
 
     def iblContextMenu(self, event):
         self.ui_ibl_menu.move(event.globalPos())
+        enabled = ("View/Edit Details", "Create Empty", "Remove")
+        for x in self.ui_ibl_menu.children():
+            x.setEnabled(x.text() in enabled)
         self.ui_ibl_menu.exec_()
 
     def iblActionTriggered(self, action):
         item = self.ui_ibls.item(self.ui_ibls.currentRow())
-        {
-            "View Details": lambda x=item: self.open_dview(x),
-        }.get(action.text(), lambda: None)()
+        actions = {
+            "View/Edit Details": lambda x=item: self.open_dview(x),
+            "Create Empty": self.new_ibl,
+            "Remove": lambda x=item: self.remove_ibl(x)
+        }
+        actions.get(action.text(), lambda: None)()
+
+    def new_ibl(self):
+        ibl = NewIBL.get_ibl(parent=self)
+        if ibl:
+            item = self.add_ibl(ibl)
+            self.open_dview(item)
+
+    def remove_ibl(self, item):
+        ibl = self.get_ibl_by_card(item)
+        if not ibl:
+            return
+        ok = QtGui.QMessageBox.question(
+            self,
+            "IBL Stuff",
+            "Are you sure you want to delete the selected lightrig?",
+            buttons=QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
+        if ok != QtGui.QMessageBox.Cancel:
+            api.remove_ibl(ibl.get("title"))
+            self.ui_ibls.takeItem(self.ui_ibls.currentRow())
+            self.update_projects()
+
+    def get_ibl_by_card(self, item):
+        for k, v in self.ibl_cache.iteritems():
+            if item is v:
+                return api.get_ibl(k)
+        return None
