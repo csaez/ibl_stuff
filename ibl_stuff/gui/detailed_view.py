@@ -121,7 +121,7 @@ class DetailedView(QtGui.QDialog):
                 text = text.split(", ")
                 text = [x for x in text if x]
             self.ibl[label] = text
-        api.save_ibl(self.ibl)
+        api.save(self.ibl)
 
     def _get_text(self, widget):
         return {

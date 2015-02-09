@@ -125,15 +125,26 @@ def get_ibl(title):
     return None
 
 
+def load_ibl(title):
+    ibl = get_ibl(title)
+    load(ibl)
+
+
+def load(ibl):
+    if not ibl:
+        return False
+    print "LOADING", ibl.get("title")
+    return True
+
+
 def new_ibl(title):
-    title = title.replace(" ", "_")
     src = os.path.join(os.path.dirname(__file__), "..", "data", "template")
     dst = os.path.join(get_library(), title)
     copy_anything(src, dst)
     data = os.path.join(dst, "metadata.json")
     ibl = IBL.from_data(data)
     ibl["title"] = title
-    save_ibl(ibl)
+    save(ibl)
     return ibl
 
 
@@ -157,7 +168,14 @@ def copy_anything(src, dst):
         shutil.copy(src, dst)
 
 
-def save_ibl(ibl):
+def save_ibl(title):
+    ibl = get_ibl(title)
+    if ibl:
+        return save(ibl)
+    return False
+
+
+def save(ibl):
     ibl.save()
     CACHE["ibls"][ibl.get("title")] = ibl
     # force cache update

@@ -161,10 +161,11 @@ class Explorer(QtGui.QMainWindow):
         self.setCentralWidget(cw)
         self.resize(900, 550)
         # connect signals
-        self.ui_ibl_menu.triggered.connect(self.iblActionTriggered)
+        self.ui_ibl_menu.triggered.connect(
+            lambda x: self.iblActionTriggered(x.text()))
         self.ui_ibls.contextMenuEvent = self.iblContextMenu
         self.ui_search.textChanged.connect(self.filter_ibls)
-        self.ui_ibls.itemDoubleClicked.connect(self.open_dview)
+        self.ui_ibls.itemDoubleClicked.connect(self.load)
         self.ui_project.itemClicked.connect(self.filter_by_project)
         # fill gui
         self.reload()
@@ -228,6 +229,11 @@ class Explorer(QtGui.QMainWindow):
         for k, v in self.ibl_cache.iteritems():
             v.setHidden(k not in results)
 
+    def load(self, item):
+        ibl = self.get_ibl_by_card(item)
+        if ibl:
+            api.load(ibl)
+
     def open_dview(self, item):
         ibl = self.get_ibl_by_card(item)
         if not ibl:
@@ -262,25 +268,23 @@ class Explorer(QtGui.QMainWindow):
             self.ui_search.setText(event.text())
 
     def iblContextMenu(self, event):
-        self.ui_ibl_menu.move(event.globalPos())
-        enabled = (
-            "View/Edit Details",
-            "Create Empty",
-            "Remove",
-            "Set Library")
+        self.iblActionTriggered(None)  # init self.ui_menu_actions
+        enabled = self.ui_menu_actions.keys()
         for x in self.ui_ibl_menu.children():
             x.setEnabled(x.text() in enabled)
+        self.ui_ibl_menu.move(event.globalPos())
         self.ui_ibl_menu.exec_()
 
     def iblActionTriggered(self, action):
         item = self.ui_ibls.item(self.ui_ibls.currentRow())
-        actions = {
+        self.ui_menu_actions = {
+            "Load": lambda x=item: self.load(x),
             "View/Edit Details": lambda x=item: self.open_dview(x),
             "Create Empty": self.new_ibl,
             "Remove": lambda x=item: self.remove_ibl(x),
             "Set Library": self.set_library
         }
-        actions.get(action.text(), lambda: None)()
+        self.ui_menu_actions.get(action, lambda: None)()
 
     def new_ibl(self):
         ibl = NewIBL.get_ibl(parent=self)
