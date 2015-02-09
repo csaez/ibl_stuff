@@ -134,15 +134,16 @@ class Explorer(QtGui.QMainWindow):
         # set ibl context menu
         self.ui_ibl_menu = QtGui.QMenu(self)
         menu_items = (
-            "Send to Maya",
+            "Load",
             "View/Edit Details",
             "Create Empty",
             "Remove",
             "Import",
             "Export",
+            "Set Library",
         )
         for action in menu_items:
-            if action in ("Create Empty", "Import"):
+            if action in ("Create Empty", "Import", "Set Library"):
                 self.ui_ibl_menu.addSeparator()
             self.ui_ibl_menu.addAction(action)
         # set projects
@@ -262,7 +263,11 @@ class Explorer(QtGui.QMainWindow):
 
     def iblContextMenu(self, event):
         self.ui_ibl_menu.move(event.globalPos())
-        enabled = ("View/Edit Details", "Create Empty", "Remove")
+        enabled = (
+            "View/Edit Details",
+            "Create Empty",
+            "Remove",
+            "Set Library")
         for x in self.ui_ibl_menu.children():
             x.setEnabled(x.text() in enabled)
         self.ui_ibl_menu.exec_()
@@ -272,7 +277,8 @@ class Explorer(QtGui.QMainWindow):
         actions = {
             "View/Edit Details": lambda x=item: self.open_dview(x),
             "Create Empty": self.new_ibl,
-            "Remove": lambda x=item: self.remove_ibl(x)
+            "Remove": lambda x=item: self.remove_ibl(x),
+            "Set Library": self.set_library
         }
         actions.get(action.text(), lambda: None)()
 
@@ -301,3 +307,11 @@ class Explorer(QtGui.QMainWindow):
             if item is v:
                 return api.get_ibl(k)
         return None
+
+    def set_library(self):
+        existing_library = api.get_library()
+        l = QtGui.QFileDialog.getExistingDirectory(self, "Set Library Folder",
+                                                   existing_library)
+        if len(l) and l != existing_library:
+            api.set_library(l)
+            self.reload()
