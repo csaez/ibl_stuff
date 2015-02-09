@@ -1,24 +1,14 @@
 import sys
 from PySide import QtGui
 from ibl_stuff.gui import Explorer
+from ibl_stuff.libs import qt_helpers
 
 
 def show():
-    # get parent
-    parent = QtGui.QApplication.activeWindow()
-    _ = parent.parent()
-    while _:
-        parent = _
-        _ = parent.parent()
-    # find instance
-    w = None
-    for child in parent.children():
-        if not isinstance(child, Explorer):
-            continue
-        w = child
+    parent = qt_helpers.get_parent()
+    w = qt_helpers.find_instance(parent, Explorer)
     if w is None:
         w = Explorer(parent)
-    # show
     w.show()
 
 if __name__ == "__main__":

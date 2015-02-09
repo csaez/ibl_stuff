@@ -35,6 +35,8 @@ def set_library(library_path):
     library_path = os.path.normpath(library_path)
     settings = QSettings("csaez", "ibl_stuff")
     settings.setValue("library", library_path)
+    clear_cache()
+    return True
 
 
 def get_projects():
@@ -128,7 +130,8 @@ def new_ibl(title):
     src = os.path.join(os.path.dirname(__file__), "..", "data", "template")
     dst = os.path.join(get_library(), title)
     copy_anything(src, dst)
-    ibl = IBL.from_data(os.path.join(dst, "metadata.json"))
+    data = os.path.join(dst, "metadata.json")
+    ibl = IBL.from_data(data)
     ibl["title"] = title
     save_ibl(ibl)
     return ibl
@@ -161,6 +164,7 @@ def save_ibl(ibl):
     CACHE["projects"] = dict()
     CACHE["tags"] = list()
     CACHE["searches"] = dict()
+    return True
 
 
 def get_tags():

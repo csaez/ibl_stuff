@@ -26,11 +26,12 @@ def setup_library():
 
 
 def teardown_library():
-    _library = libs.get_library()
+    _library = os.path.join(os.path.expanduser("~"), "test_library")
     shutil.rmtree(_library)
-    libs.set_library(LIBRARY)
     if ENV_LIBRARY:
         os.environ["IBL_LIBRARY"] = ENV_LIBRARY
+    print LIBRARY
+    libs.set_library(LIBRARY)
 
 
 @with_setup(setup_library, teardown_library)
