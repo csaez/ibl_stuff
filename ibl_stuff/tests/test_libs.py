@@ -2,7 +2,7 @@ import os
 import shutil
 from nose import with_setup
 from PySide.QtCore import QSettings
-from ibl_stuff import libs
+from ibl_stuff.libs import base as libs
 
 LIBRARY = libs.get_library()
 ENV_LIBRARY = os.environ.get("IBL_LIBRARY")
@@ -70,6 +70,26 @@ def test_get_ibl():
     assert libs.get_ibl("foo") is None
     libs.clear_cache()
     assert libs.get_ibl("test0") is not None
+
+
+@with_setup(setup_library, teardown_library)
+def test_save_success():
+    for i in range(3):
+        assert libs.save_ibl("test%d" % i)
+
+
+def test_save_fail():
+    assert not libs.save_ibl("unmatched_title")
+
+
+@with_setup(setup_library, teardown_library)
+def test_load_success():
+    for i in range(3):
+        assert libs.load_ibl("test%d" % i)
+
+
+def test_load_fail():
+    assert not libs.load_ibl("unmatched_title")
 
 
 @with_setup(setup_library, teardown_library)

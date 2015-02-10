@@ -1,5 +1,4 @@
 from PySide import QtGui, QtCore
-
 from ibl_stuff import api
 from ibl_stuff.gui.preview import Preview
 from ibl_stuff.gui.detailed_view import DetailedView
@@ -15,7 +14,7 @@ class Card(QtGui.QWidget):
         self.init_ui()
 
     def init_ui(self):
-        # create qwidgets
+        # create widgets
         self.ui_preview = Preview(self.ibl)
         for each in self.LABELS:
             setattr(self, "ui_" + each, QtGui.QLabel())
