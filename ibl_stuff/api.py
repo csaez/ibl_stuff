@@ -23,13 +23,14 @@ def _override_globals(host):
 
 
 def init_host(host=None):
-    _override_globals("base")
     if host is not None:  # explicitly defined
         _override_globals(host)
+        return
     else:  # lets try to figure out automagically
         for guess in ("maya", "nuke"):
             if _find(guess):
                 _override_globals(guess)
                 return
+    _override_globals("base")
 
 init_host()
