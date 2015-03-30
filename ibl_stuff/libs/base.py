@@ -133,6 +133,7 @@ def load_ibl(title):
 def load(ibl):
     if not ibl:
         return False
+    # TODO: implement load function
     print "LOADING", ibl.get("title")
     return True
 

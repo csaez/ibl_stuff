@@ -1,0 +1,15 @@
+import unittest
+from ibl_stuff import api
+
+
+class TestAPI(unittest.TestCase):
+
+    def test_load(self):
+        for host in ("base", "maya", "nuke"):
+            api.init_host(host)
+            self.assertIn(host, api.__name__)
+        api.init_host()
+        self.assertIn("base", api.__name__)
+
+if __name__ == "__main__":
+    unittest.main()
