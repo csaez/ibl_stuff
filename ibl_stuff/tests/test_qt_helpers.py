@@ -16,7 +16,7 @@ class Bar():
 class SimpleTest(unittest.TestCase):
 
     def test_get_parent_empty(self):
-        assert qt_helpers.get_parent() is None
+        self.assertIsNone(qt_helpers.get_parent())
 
 
 class TestQt(unittest.TestCase):
@@ -34,10 +34,10 @@ class TestQt(unittest.TestCase):
         self.PARENT = None
 
     def test_find_instance_success(self):
-        assert qt_helpers.find_instance(self.PARENT, Foo) is not None
+        self.assertIsNotNone(qt_helpers.find_instance(self.PARENT, Foo))
 
     def test_find_instance_fail(self):
-        assert qt_helpers.find_instance(self.PARENT, Bar) is None
+        self.assertIsNone(qt_helpers.find_instance(self.PARENT, Bar))
 
 if __name__ == "__main__":
     unittest.main()

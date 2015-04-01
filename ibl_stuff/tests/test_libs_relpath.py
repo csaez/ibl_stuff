@@ -18,9 +18,7 @@ class PathTests(unittest.TestCase):
     def test(self):
         p1 = "A/B/C"
         p2 = "A/B/C/E"
-        relpath.test(p1, p2)
         self.assertEqual(relpath.relpath(p1, p2), "E")
-        relpath.test(p2, p1)
         self.assertEqual(relpath.relpath(p2, p1), "../")
 
 if __name__ == "__main__":
