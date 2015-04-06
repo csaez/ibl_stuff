@@ -1,0 +1,740 @@
+#! C:/Program Files/Nuke8.0v6/nuke-8.0.v6.dll -nx
+version 8.0 v6
+Gizmo {
+ tile_color 0x2a7288ff
+ addUserKnob {20 rebuild l Rebuild}
+ addUserKnob {20 cubeToLatLong l "Cube to Lat Long Map" n 1}
+ addUserKnob {26 sep l "" +STARTLINE T " "}
+ addUserKnob {26 enableRoto_text l "" +STARTLINE T "\t      Use RotoPaint"}
+ addUserKnob {22 frontBtn l Front t "Show Front cube side from input LatLong map in a viewer, and open RotoPaint operator." T "# Select which node to show\nnuke.toNode('sideView').knob('which').setValue(0)\n\n# View in active viewer\nN = nuke.toNode(\"sideView\")\nnuke.connectViewer(1,N)\n\n# Open property panel\nnuke.thisNode().begin()\nD = nuke.toNode('RotoFront').input(1).name() #Select upstream connected node\nnuke.toNode(D)\['name'].setValue('RotoPaintFront') #Set nodename to above node selected\nR = nuke.toNode('RotoPaintFront')\nnuke.show(R)\nnuke.thisNode().end()" +STARTLINE}
+ addUserKnob {26 sep_1 l "" -STARTLINE T "        "}
+ addUserKnob {6 enableRotoFront l "" t "Enable/disable RotoPaint for Front side." -STARTLINE}
+ enableRotoFront true
+ addUserKnob {22 backBtn l Back t "Show Back cube side from input LatLong map in a viewer, and open RotoPaint operator." T "# Select which node to show\nnuke.toNode('sideView').knob('which').setValue(2)\n\n# View in active viewer\nN = nuke.toNode(\"sideView\")\nnuke.connectViewer(1,N)\n\n# Open property panel\nnuke.thisNode().begin()\nD = nuke.toNode('RotoBack').input(1).name() #Select upstream connected node\nnuke.toNode(D)\['name'].setValue('RotoPaintBack') #Set nodename to above node selected\nR = nuke.toNode('RotoPaintBack')\nnuke.show(R)\nnuke.thisNode().end()" +STARTLINE}
+ addUserKnob {26 sep_2 l "" -STARTLINE T "        "}
+ addUserKnob {6 enableRotoBack l "" t "Enable/disable RotoPaint for Back side." -STARTLINE}
+ enableRotoBack true
+ addUserKnob {22 leftBtn l Left t "Show Left cube side from input LatLong map in a viewer, and open RotoPaint operator." T "# Select which node to show\nnuke.toNode('sideView').knob('which').setValue(1)\n\n# View in active viewer\nN = nuke.toNode(\"sideView\")\nnuke.connectViewer(1,N)\n\n# Open property panel\nnuke.thisNode().begin()\nD = nuke.toNode('RotoLeft').input(1).name() #Select upstream connected node\nnuke.toNode(D)\['name'].setValue('RotoPaintLeft') #Set nodename to above node selected\nR = nuke.toNode('RotoPaintLeft')\nnuke.show(R)\nnuke.thisNode().end()" +STARTLINE}
+ addUserKnob {26 sep_3 l "" -STARTLINE T "        "}
+ addUserKnob {6 enableRotoLeft l "" t "Enable/disable RotoPaint for Left side." -STARTLINE}
+ enableRotoLeft true
+ addUserKnob {22 rightBtn l Right t "Show Right cube side from input LatLong map in a viewer, and open RotoPaint operator." T "# Select which node to show\nnuke.toNode('sideView').knob('which').setValue(3)\n\n# View in active viewer\nN = nuke.toNode(\"sideView\")\nnuke.connectViewer(1,N)\n\n# Open property panel\nnuke.thisNode().begin()\nD = nuke.toNode('RotoRight').input(1).name() #Select upstream connected node\nnuke.toNode(D)\['name'].setValue('RotoPaintRight') #Set nodename to above node selected\nR = nuke.toNode('RotoPaintRight')\nnuke.show(R)\nnuke.thisNode().end()" +STARTLINE}
+ addUserKnob {26 sep_4 l "" -STARTLINE T "        "}
+ addUserKnob {6 enableRotoRight l "" t "Enable/disable RotoPaint for Right side." -STARTLINE}
+ enableRotoRight true
+ addUserKnob {22 topBtn l Top t "Show Top cube side from input LatLong map in a viewer, and open RotoPaint operator." T "# Select which node to show\nnuke.toNode('sideView').knob('which').setValue(4)\n\n# View in active viewer\nN = nuke.toNode(\"sideView\")\nnuke.connectViewer(1,N)\n\n# Open property panel\nnuke.thisNode().begin()\nD = nuke.toNode('RotoTop').input(1).name() #Select upstream connected node\nnuke.toNode(D)\['name'].setValue('RotoPaintTop') #Set nodename to above node selected\nR = nuke.toNode('RotoPaintTop')\nnuke.show(R)\nnuke.thisNode().end()" +STARTLINE}
+ addUserKnob {26 sep_5 l "" -STARTLINE T "        "}
+ addUserKnob {6 enableRotoTop l "" t "Enable/disable RotoPaint for Top side." -STARTLINE}
+ enableRotoTop true
+ addUserKnob {22 bottomBtn l Bottom t "Show Bottom cube side from input LatLong map in a viewer, and open RotoPaint operator." T "# Select which node to show\nnuke.toNode('sideView').knob('which').setValue(5)\n\n# View in active viewer\nN = nuke.toNode(\"sideView\")\nnuke.connectViewer(1,N)\n\n# Open property panel\nnuke.thisNode().begin()\nD = nuke.toNode('RotoBottom').input(1).name() #Select upstream connected node\nnuke.toNode(D)\['name'].setValue('RotoPaintBottom') #Set nodename to above node selected\nR = nuke.toNode('RotoPaintBottom')\nnuke.show(R)\nnuke.thisNode().end()" +STARTLINE}
+ addUserKnob {26 sep_6 l "" -STARTLINE T "        "}
+ addUserKnob {6 enableRotoBottom l "" t "Enable/disable RotoPaint for Bottom side." -STARTLINE}
+ enableRotoBottom true
+ addUserKnob {26 ""}
+ addUserKnob {22 viewCube l "View Cube" t "Show 3D view and a cube to check map is mapping as expected." T "# View in active viewer\nN = nuke.toNode(\"cube\")\nnuke.connectViewer(1,N)" +STARTLINE}
+ addUserKnob {22 viewSphere l "View Sphere" t "Show 3D view and a Sphere to check mapping as expected." -STARTLINE T "# View in active viewer\nN = nuke.toNode(\"sphere\")\nnuke.connectViewer(1,N)"}
+ addUserKnob {20 cubeToLatLong l endGroup n -1}
+ addUserKnob {20 about l About}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x44626cff
+  label "Cube to LatLong"
+  note_font_size 30
+  xpos -335
+  ypos -201
+  bdwidth 774
+  bdheight 707
+ }
+ Input {
+  inputs 0
+  name Input1
+  xpos 16
+  ypos -273
+ }
+ Reformat {
+  format "4096 2048 0 0 4096 2048 1 panorama"
+  name Reformat
+  label "4K 2:1 \nPanoramic\n"
+  xpos 16
+  ypos -171
+ }
+set Nc2f2330 [stack 0]
+ Dot {
+  name Dot10
+  xpos 214
+  ypos -126
+ }
+ SphericalTransform {
+  input "Lat Long map"
+  output Cube
+  out_rx 90
+  format "2048 2048 0 0 2048 2048 1 square_2K"
+  fix true
+  name SphericalTransformTop
+  xpos 180
+  ypos -87
+ }
+set Nc2f2a10 [stack 0]
+ RotoPaint {
+  output rgb
+  curves {{{v x3f99999a}
+  {f 0}
+  {n
+   {layer Root
+    {f 512}
+    {t x44800000 x44800000}
+    {a}}}}}
+  toolbox {brush {
+  { selectAll str 1 ssx 1 ssy 1 sf 1 }
+  { createBezier str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBezierCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBSpline str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createEllipse str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangle str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangleCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { brush str 1 ssx 1 ssy 1 sf 1 sb 1 tt 17 }
+  { eraser src 2 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { clone src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { reveal src 3 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { dodge src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { burn src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { blur src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { sharpen src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { smear src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+} }
+  toolbar_brush_hardness 0.200000003
+  toolbar_lifetime_type single
+  toolbar_source_transform_scale {1 1}
+  toolbar_source_transform_center {1024 778}
+  colorOverlay {0 0 0 0}
+  view {}
+  motionblur_on true
+  brush_spacing 0.05000000075
+  brush_hardness 0.200000003
+  source_black_outside true
+  createNewTrack {{-1} "-1\t(none)\t-1" "1000\tNew Track Layer\t1000"}
+  name RotoPaintTop
+  xpos 141
+  ypos -9
+ }
+push $Nc2f2a10
+ Switch {
+  inputs 2
+  which {{enableRotoTop==0?0:1}}
+  name RotoTop
+  tile_color 0xff
+  xpos 180
+  ypos 63
+ }
+set Nc41e200 [stack 0]
+ Dot {
+  name Dot5
+  xpos 214
+  ypos 378
+ }
+push $Nc2f2330
+ Dot {
+  name Dot8
+  xpos 324
+  ypos -150
+ }
+ SphericalTransform {
+  input "Lat Long map"
+  output Cube
+  out_rx -90
+  format "2048 2048 0 0 2048 2048 1 square_2K"
+  fix true
+  name SphericalTransformBottom
+  xpos 290
+  ypos -87
+ }
+set Nc2f37d0 [stack 0]
+ RotoPaint {
+  output rgb
+  curves {{{v x3f99999a}
+  {f 0}
+  {n
+   {layer Root
+    {f 512}
+    {t x44800000 x44800000}
+    {a}}}}}
+  toolbox {selectAll {
+  { selectAll str 1 ssx 1 ssy 1 sf 1 }
+  { createBezier str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBezierCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBSpline str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createEllipse str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangle str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangleCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { brush bs 695 str 1 ssx 1 ssy 1 sf 1 sb 1 tt 17 }
+  { eraser src 2 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { clone src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { reveal src 3 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { dodge src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { burn src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { blur src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { sharpen src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { smear src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+} }
+  toolbar_brush_size 695
+  toolbar_brush_hardness 0.200000003
+  toolbar_lifetime_type single
+  toolbar_source_transform_scale {1 1}
+  toolbar_source_transform_center {1024 778}
+  colorOverlay {0 0 0 0}
+  view {}
+  motionblur_on true
+  brush_spacing 0.05000000075
+  brush_hardness 0.200000003
+  source_black_outside true
+  createNewTrack {{-1} "-1\t(none)\t-1" "1000\tNew Track Layer\t1000"}
+  name RotoPaintBottom
+  xpos 251
+  ypos -9
+ }
+push $Nc2f37d0
+ Switch {
+  inputs 2
+  which {{enableRotoBottom==0?0:1}}
+  name RotoBottom
+  tile_color 0xff
+  xpos 290
+  ypos 63
+ }
+set Nc596cc0 [stack 0]
+ Dot {
+  name Dot6
+  xpos 324
+  ypos 378
+ }
+push $Nc2f2330
+ SphericalTransform {
+  input "Lat Long map"
+  output Cube
+  out_ry 270
+  format "2048 2048 0 0 2048 2048 1 square_2K"
+  fix true
+  name SphericalTransformRight
+  xpos 70
+  ypos -87
+ }
+set Nc2f4220 [stack 0]
+ RotoPaint {
+  output rgb
+  curves {{{v x3f99999a}
+  {f 0}
+  {n
+   {layer Root
+    {f 512}
+    {t x44800000 x44800000}
+    {a}}}}}
+  toolbox {brush {
+  { selectAll str 1 ssx 1 ssy 1 sf 1 }
+  { createBezier str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBezierCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBSpline str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createEllipse str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangle str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangleCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { brush str 1 ssx 1 ssy 1 sf 1 sb 1 tt 17 }
+  { eraser src 2 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { clone src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { reveal src 3 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { dodge src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { burn src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { blur src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { sharpen src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { smear src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+} }
+  toolbar_brush_hardness 0.200000003
+  toolbar_lifetime_type single
+  toolbar_source_transform_scale {1 1}
+  toolbar_source_transform_center {1024 778}
+  colorOverlay {0 0 0 0}
+  view {}
+  motionblur_on true
+  brush_spacing 0.05000000075
+  brush_hardness 0.200000003
+  source_black_outside true
+  createNewTrack {{-1} "-1\t(none)\t-1" "1000\tNew Track Layer\t1000"}
+  name RotoPaintRight
+  xpos 31
+  ypos -9
+ }
+push $Nc2f4220
+ Switch {
+  inputs 2
+  which {{enableRotoRight==0?0:1}}
+  name RotoRight
+  tile_color 0xff
+  xpos 70
+  ypos 63
+ }
+set Nc710690 [stack 0]
+ Dot {
+  name Dot4
+  xpos 104
+  ypos 378
+ }
+push $Nc2f2330
+ Dot {
+  name Dot9
+  xpos -116
+  ypos -126
+ }
+ SphericalTransform {
+  input "Lat Long map"
+  output Cube
+  out_ry 90
+  format "2048 2048 0 0 2048 2048 1 square_2K"
+  fix true
+  name SphericalTransformLeft
+  xpos -150
+  ypos -87
+ }
+set Nc2f4fe0 [stack 0]
+ RotoPaint {
+  output rgb
+  curves {{{v x3f99999a}
+  {f 0}
+  {n
+   {layer Root
+    {f 512}
+    {t x44800000 x44800000}
+    {a}}}}}
+  toolbox {brush {
+  { selectAll str 1 ssx 1 ssy 1 sf 1 }
+  { createBezier str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBezierCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBSpline str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createEllipse str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangle str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangleCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { brush str 1 ssx 1 ssy 1 sf 1 sb 1 tt 17 }
+  { eraser src 2 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { clone src 1 stx 145 sty 255 str 1 ssx 1 ssy 1 sf 1 sb 1 tt 19 }
+  { reveal src 3 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { dodge src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { burn src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { blur src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { sharpen src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { smear src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+} }
+  toolbar_brush_hardness 0.200000003
+  toolbar_lifetime_type single
+  toolbar_source_transform_scale {1 1}
+  toolbar_source_transform_center {1024 778}
+  colorOverlay {0 0 0 0}
+  view {}
+  motionblur_on true
+  brush_spacing 0.05000000075
+  brush_hardness 0.200000003
+  source_black_outside true
+  createNewTrack {{-1} "-1\t(none)\t-1" "1000\tNew Track Layer\t1000"}
+  name RotoPaintLeft
+  xpos -189
+  ypos -9
+ }
+push $Nc2f4fe0
+ Switch {
+  inputs 2
+  which {{enableRotoLeft==0?0:1}}
+  name RotoLeft
+  tile_color 0xff
+  xpos -150
+  ypos 63
+ }
+set Nc81fbd0 [stack 0]
+ Dot {
+  name Dot2
+  xpos -116
+  ypos 378
+ }
+push $Nc2f2330
+ SphericalTransform {
+  input "Lat Long map"
+  output Cube
+  out_ry 180
+  format "2048 2048 0 0 2048 2048 1 square_2K"
+  fix true
+  name SphericalTransformBack
+  xpos -40
+  ypos -87
+ }
+set N168807f0 [stack 0]
+ RotoPaint {
+  output rgb
+  curves {{{v x3f99999a}
+  {f 0}
+  {n
+   {layer Root
+    {f 512}
+    {t x44800000 x44800000}
+    {a}}}}}
+  toolbox {brush {
+  { selectAll str 1 ssx 1 ssy 1 sf 1 }
+  { createBezier str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBezierCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBSpline str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createEllipse str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangle str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangleCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { brush str 1 ssx 1 ssy 1 sf 1 sb 1 tt 17 }
+  { eraser src 2 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { clone src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { reveal src 3 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { dodge src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { burn src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { blur src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { sharpen src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { smear src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+} }
+  toolbar_brush_hardness 0.200000003
+  toolbar_lifetime_type single
+  toolbar_source_transform_scale {1 1}
+  toolbar_source_transform_center {1024 778}
+  colorOverlay {0 0 0 0}
+  view {}
+  motionblur_on true
+  brush_spacing 0.05000000075
+  brush_hardness 0.200000003
+  source_black_outside true
+  createNewTrack {{-1} "-1\t(none)\t-1" "1000\tNew Track Layer\t1000"}
+  name RotoPaintBack
+  xpos -79
+  ypos -9
+ }
+push $N168807f0
+ Switch {
+  inputs 2
+  which {{enableRotoBack==0?0:1}}
+  name RotoBack
+  tile_color 0xff
+  xpos -40
+  ypos 63
+ }
+set N167ccd90 [stack 0]
+ Dot {
+  name Dot3
+  xpos -6
+  ypos 378
+ }
+push $Nc2f2330
+ Dot {
+  name Dot7
+  xpos -226
+  ypos -150
+ }
+ SphericalTransform {
+  input "Lat Long map"
+  output Cube
+  format "2048 2048 0 0 2048 2048 1 square_2K"
+  fix true
+  name SphericalTransformFront
+  xpos -260
+  ypos -87
+ }
+set N168815b0 [stack 0]
+ RotoPaint {
+  output rgb
+  curves {{{v x3f99999a}
+  {f 0}
+  {n
+   {layer Root
+    {f 512}
+    {t x44800000 x44800000}
+    {a}}}}}
+  toolbox {brush {
+  { selectAll str 1 ssx 1 ssy 1 sf 1 }
+  { createBezier str 1 ssx 1 ssy 1 sf 1 sb 1 tt 4 }
+  { createBezierCusped str 1 ssx 1 ssy 1 sf 1 sb 1 tt 5 }
+  { createBSpline str 1 ssx 1 ssy 1 sf 1 sb 1 tt 6 }
+  { createEllipse str 1 ssx 1 ssy 1 sf 1 sb 1 tt 7 }
+  { createRectangle str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangleCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { brush str 1 ssx 1 ssy 1 sf 1 sb 1 tt 17 }
+  { eraser src 2 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { clone src 1 stx 211 sty 353 str 1 ssx 1 ssy 1 sf 1 sb 1 tt 19 }
+  { reveal src 3 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { dodge src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { burn src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { blur src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { sharpen src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { smear src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+} }
+  toolbar_brush_hardness 0.200000003
+  toolbar_lifetime_type single
+  toolbar_source_transform_scale {1 1}
+  toolbar_source_transform_center {1024 778}
+  colorOverlay {0 0 0 0}
+  view {}
+  motionblur_on true
+  brush_spacing 0.05000000075
+  brush_hardness 0.200000003
+  source_black_outside true
+  createNewTrack {{-1} "-1\t(none)\t-1" "1000\tNew Track Layer\t1000"}
+  name RotoPaintFront
+  label "\n\n"
+  xpos -299
+  ypos -9
+ }
+push $N168815b0
+ Switch {
+  inputs 2
+  which {{enableRotoFront==0?0:1 x1 0}}
+  name RotoFront
+  tile_color 0xff
+  xpos -260
+  ypos 63
+ }
+set N16a93360 [stack 0]
+ Dot {
+  name Dot1
+  xpos -226
+  ypos 378
+ }
+ SphericalTransform {
+  inputs 6
+  input Cube
+  format "4096 2048 0 0 4096 2048 1 panorama"
+  fix true
+  name SphericalTransform10
+  xpos 17
+  ypos 465
+ }
+set N16882000 [stack 0]
+ Output {
+  name Output1
+  xpos 17
+  ypos 567
+ }
+push $Nc596cc0
+push $Nc41e200
+push $Nc710690
+push $N167ccd90
+push $Nc81fbd0
+push $N16a93360
+ Switch {
+  inputs 6
+  which 4
+  name sideView
+  tile_color 0xff
+  xpos 17
+  ypos 144
+ }
+push $N16882000
+ Sphere {
+  selectable false
+  rows 16
+  radius 0.6
+  rotate {0 180 0}
+  name sphere
+  xpos 17
+  ypos 295
+ }
+push $N16a93360
+push $Nc710690
+push $N167ccd90
+push $Nc81fbd0
+push $Nc41e200
+push $Nc596cc0
+ Group {
+  inputs 6
+  name cube
+  xpos 16
+  ypos 247
+ }
+  Input {
+   inputs 0
+   name InputBottom
+   xpos -212
+   ypos 90
+  }
+  Card2 {
+   image_aspect false
+   rows 2
+   columns 2
+   translate {0 -0.5 0}
+   rotate {90 0 0}
+   control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+   name bottom
+   xpos -212
+   ypos 130
+  }
+  Input {
+   inputs 0
+   name InputTop
+   xpos -325
+   ypos 90
+   number 1
+  }
+  Card2 {
+   image_aspect false
+   rows 2
+   columns 2
+   translate {0 0.5 0}
+   rotate {-90 0 0}
+   control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+   name top
+   xpos -325
+   ypos 130
+  }
+  Input {
+   inputs 0
+   name InputLeft
+   xpos -648
+   ypos 90
+   number 2
+  }
+  Card2 {
+   image_aspect false
+   rows 2
+   columns 2
+   translate {-0.5 0 0}
+   rotate {0 -90 0}
+   control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+   name left
+   xpos -648
+   ypos 130
+  }
+  Input {
+   inputs 0
+   name InputBack
+   xpos -538
+   ypos 90
+   number 3
+  }
+  Card2 {
+   image_aspect false
+   rows 2
+   columns 2
+   translate {0 0 -0.5}
+   rotate {0 180 0}
+   control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+   name back
+   selected true
+   xpos -538
+   ypos 130
+  }
+  Input {
+   inputs 0
+   name InputRight
+   xpos -428
+   ypos 90
+   number 4
+  }
+  Card2 {
+   image_aspect false
+   rows 2
+   columns 2
+   translate {0.5 0 0}
+   rotate {0 90 0}
+   control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+   name right
+   xpos -428
+   ypos 130
+  }
+  Input {
+   inputs 0
+   name InputFront
+   xpos -758
+   ypos 90
+   number 5
+  }
+  Card2 {
+   image_aspect false
+   rows 2
+   columns 2
+   translate {0 0 0.5}
+   control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+   name front
+   xpos -758
+   ypos 130
+  }
+  MergeGeo {
+   inputs 6
+   display textured
+   selectable false
+   name cube
+   xpos -480
+   ypos 204
+  }
+  Output {
+   name Output1
+   xpos -480
+   ypos 259
+  }
+ end_group
+ Viewer {
+  inputs 2
+  input_number 1
+  downrez 4
+  input_process false
+  name Viewer1
+  selected true
+  xpos 138
+  ypos 280
+ }
+end_group
