@@ -20,7 +20,7 @@ class Card(QtGui.QWidget):
             setattr(self, "ui_" + each, QtGui.QLabel())
             getattr(self, "ui_" + each).setMaximumWidth(450)
         f = self.ui_title.font()
-        f.setPointSize(f.pointSize() * 1.5)
+        f.setPointSize(16)
         f.setBold(True)
         f.setCapitalization(QtGui.QFont.AllUppercase)
         self.ui_title.setFont(f)
