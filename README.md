@@ -53,6 +53,12 @@ import ibl_stuff
 ibl_stuff.show()
 ```
 
+Or run it as standalone by typing te following in a terminal
+
+```bash
+python -m ibl_stuff
+```
+
 ### Nuke Tools
 
 In order to produce high quality assets for `ibl stuff`, Alberto has
